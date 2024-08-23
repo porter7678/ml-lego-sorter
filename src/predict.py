@@ -1,3 +1,6 @@
+print('Beginning imports...')
+import time
+
 import torch
 import torch.nn as nn
 from torchvision import models, datasets
@@ -30,7 +33,7 @@ def load_resnet50(model_path, num_classes):
     return model
 
 
-def predict_multiple(image_dir, model_path, split='test'):
+def predict_offline(image_dir, model_path, split='test'):
     image_folder = datasets.ImageFolder(image_dir)
     num_classes = len(image_folder.classes)
     print('num_classes', num_classes)
@@ -38,6 +41,7 @@ def predict_multiple(image_dir, model_path, split='test'):
     model = load_resnet50(model_path, num_classes)
 
     i = 0
+    start = time.time()
     for image_path, label in image_folder.imgs:
         i += 1
         image = plt.imread(image_path)
@@ -46,9 +50,12 @@ def predict_multiple(image_dir, model_path, split='test'):
         
         if i == 30:
             break
+    end = time.time()
+    print(f'Total time: {end-start:.3f}')
 
 
 if __name__ == '__main__':
     model_path = 'checkpoints/resnet50_kaggle_only.pt'
     image_dir = 'kaggle_data/base_images'
-    predict_multiple(image_dir, model_path)
+    predict_offline(image_dir, model_path)
+
