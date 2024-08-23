@@ -24,7 +24,7 @@ def load_resnet50(model_path, num_classes):
     out_ftrs = num_classes
     in_ftrs = model.fc.in_features
     model.fc = nn.Linear(in_ftrs, out_ftrs)
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
     model.eval()
     return model
@@ -37,13 +37,18 @@ def predict_multiple(image_dir, model_path, split='test'):
 
     model = load_resnet50(model_path, num_classes)
 
+    i = 0
     for image_path, label in image_folder.imgs:
+        i += 1
         image = plt.imread(image_path)
         pred = predict(image, model)
         print(image_path, pred)
+        
+        if i == 30:
+            break
 
 
 if __name__ == '__main__':
     model_path = 'checkpoints/resnet50_kaggle_only.pt'
-    image_dir = 'lego_data/base_images'
+    image_dir = 'kaggle_data/base_images'
     predict_multiple(image_dir, model_path)

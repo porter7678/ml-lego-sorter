@@ -166,6 +166,7 @@ cython_debug/
 .kaggle
 
 # Datasets
-lego_data/
+kaggle_data/
 porter_data/
 
+checkpoints/
