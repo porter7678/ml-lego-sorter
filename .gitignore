@@ -168,5 +168,6 @@ cython_debug/
 # Datasets
 kaggle_data/
 porter_data/
+old_porter_data/
 
 checkpoints/

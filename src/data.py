@@ -59,8 +59,6 @@ class LegoDataset(Dataset):
         return image, label
     
 
-    
-
 def get_inference_transforms():
     pretrained_transforms = models.ResNet50_Weights.IMAGENET1K_V2.transforms()
     inference_transforms = transforms.Compose([
