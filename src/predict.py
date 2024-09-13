@@ -12,7 +12,7 @@ from torchvision import models, datasets
 import matplotlib.pyplot as plt
 
 from data import LegoDataset, get_inference_transforms
-from servo import Servo
+from servo import MyServo, ServoThread
 
 class_to_idx = {'2x2': 0, '2x4': 1, 'blank': 2}
 idx_to_class = {v:k for k, v in class_to_idx.items()}
@@ -77,16 +77,16 @@ def predict_live(model_path, left_label, right_label, move_interval_seconds=10, 
 
     cap = capture_init()
     model = load_resnet50(model_path, NUM_CLASSES)
-    servo = Servo(left_label, right_label)
+    servo = MyServo(left_label, right_label)
+    servo_thread = ServoThread(servo)
+    servo_thread.start()
 
-    next_move_time = datetime.now() + timedelta(seconds=5)
+    next_move_time = datetime.now() + timedelta(seconds=3)
     pred_stack = []
 
-    maxiter = 1000
-    i = 0
     try:
         while True:
-            cap_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+            # cap_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]
             ret, image = cap.read()
             if not ret:
                 raise RuntimeError('Failed to read frame')
@@ -95,13 +95,8 @@ def predict_live(model_path, left_label, right_label, move_interval_seconds=10, 
             pred_stack.append(pred)
 
             print('\nPred:', pred, '---', idx_to_class[pred])
-            print('Cap time', cap_time) 
-            print('Now time', datetime.now().strftime("%H:%M:%S.%f")[:-3])
-
-            i += 1
-            if i == maxiter:
-                print('Hit maxiter')
-                break
+            # print('Cap time', cap_time) 
+            # print('Now time', datetime.now().strftime("%H:%M:%S.%f")[:-3])
 
             if datetime.now() >= next_move_time:
                 recent_preds = pred_stack[-num_votes:]
@@ -109,19 +104,17 @@ def predict_live(model_path, left_label, right_label, move_interval_seconds=10, 
                 if votes:
                     counts = Counter(votes)
                     selected_vote = counts.most_common(1)[0][0]
-                    
-                    servo.move_arm(selected_vote)
-                    
+                    print(f'\n~~~Moving arm: {selected_vote}')
+                    servo_thread.add_command(selected_vote)
                 else:
                     print('\n~~~Skipping arm move')
-
                 next_move_time = datetime.now() + timedelta(seconds=move_interval_seconds)
     except KeyboardInterrupt:
         pass
     finally:
-        servo.cleanup()
+        servo_thread.stop()
+        servo_thread.join()
 
-    
     print('Exiting predict_live')
 
 
@@ -135,5 +128,5 @@ if __name__ == '__main__':
 
     left_label = '2x2'
     right_label = '2x4'
-    predict_live(model_path, left_label, right_label, move_interval_seconds=3)
+    predict_live(model_path, left_label, right_label, move_interval_seconds=7)
 

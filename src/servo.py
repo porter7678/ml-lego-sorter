@@ -1,39 +1,41 @@
-import RPi.GPIO as GPIO
+from gpiozero import AngularServo
+import os
 import time
+import threading
 
-class Servo:
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+class MyServo:
 
     def __init__(self, left_label, right_label):
         self.left_label = left_label
         self.right_label = right_label
-        self.degree_to_duty_cycle = {
-            0: 12.0,
-            45: 9.0,
-            65: 8.0,
-            90: 6.5,
-            110: 4.5,
-            135: 4.0,
-            180: 1.0,
-        }
 
-        GPIO.setmode(GPIO.BOARD)
-        servo_pin = 12
-        GPIO.setup(servo_pin, GPIO.OUT)
-        self.pwm = GPIO.PWM(servo_pin, 50)
-        self.pwm.start(self.degree_to_duty_cycle[90])
+        # pin 12 == gpio 18
+        gpio_num = 18
+        
+        # Use environment variables for pigpio address and port
+        pigpio_host = os.getenv('PIGPIO_ADDR', 'localhost')
+        pigpio_port = int(os.getenv('PIGPIO_PORT', 8888))
+        factory = PiGPIOFactory(host=pigpio_host, port=pigpio_port)
 
-    def rotate(self, degrees):
-        self.pwm.ChangeDutyCycle(self.degree_to_duty_cycle[degrees])
-        time.sleep(1.0)
-        print('done rotating')
+        self.servo = AngularServo(
+            gpio_num,
+            pin_factory=factory,
+            min_pulse_width=0.5/1000,
+            max_pulse_width=2.5/1000,
+        )
+        self.stop()
 
     def move_left(self):
-        print('Moving left')
-        self.rotate(110)
+        self.servo.angle = -30
+        time.sleep(0.2)
+        self.stop()
 
     def move_right(self):
-        print('Moving right')
-        self.rotate(65)
+        self.servo.angle = 30
+        time.sleep(0.2)
+        self.stop()
 
     def move_arm(self, label):
         if label == self.left_label:
@@ -43,14 +45,35 @@ class Servo:
         else:
             print('Servo did not recognize label:', label)
 
-    def cleanup(self):
-        self.pwm.stop()
-        GPIO.cleanup()
-        print('\nGPIO sucessfully cleaned up')
+    def stop(self):
+        self.servo.detach()
+
+class ServoThread(threading.Thread):
+    def __init__(self, servo):
+        super().__init__()
+        self.servo = servo
+        self.command_queue = []
+        self.running = True
+
+    def run(self):
+        while self.running:
+            if self.command_queue:
+                label = self.command_queue.pop(0)
+                self.servo.move_arm(label)
+            time.sleep(0.1)  # Avoid busy waiting
+
+    def add_command(self, label):
+        self.command_queue.append(label)
+
+    def stop(self):
+        self.servo.stop()
+        self.running = False
+        print("Successfully cleaned up servo thread")
 
 
 if __name__ == '__main__':
-    servo = Servo()
+    servo = MyServo(None, None)
+    
     servo.move_left()
     time.sleep(2)
     servo.move_right()
@@ -59,5 +82,4 @@ if __name__ == '__main__':
     time.sleep(2)
     servo.move_right()
     time.sleep(2)
-
-    servo.cleanup()
+    servo.stop()
