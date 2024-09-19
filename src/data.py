@@ -59,8 +59,14 @@ class LegoDataset(Dataset):
         return image, label
     
 
-def get_inference_transforms():
-    pretrained_transforms = models.ResNet50_Weights.IMAGENET1K_V2.transforms()
+def get_inference_transforms(model: str):
+    if model == 'resnet50':
+        pretrained_transforms = models.ResNet50_Weights.IMAGENET1K_V2.transforms()
+    elif model == 'mobilenetv3large':
+        pretrained_transforms = models.MobileNet_V3_Large_Weights.IMAGENET1K_V2.transforms()
+    else:
+        raise ValueError(f'Model name "{model}" not recognized')
+
     inference_transforms = transforms.Compose([
         TransposeToTensor(),
         pretrained_transforms,

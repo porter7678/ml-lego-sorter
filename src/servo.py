@@ -10,6 +10,7 @@ class MyServo:
     def __init__(self, left_label, right_label):
         self.left_label = left_label
         self.right_label = right_label
+        self.curr_direction = None
 
         # pin 12 == gpio 18
         gpio_num = 18
@@ -31,16 +32,18 @@ class MyServo:
         self.servo.angle = -30
         time.sleep(0.2)
         self.stop()
+        self.curr_direction = "left'"
 
     def move_right(self):
         self.servo.angle = 30
         time.sleep(0.2)
         self.stop()
+        self.curr_direction = "right"
 
     def move_arm(self, label):
-        if label == self.left_label:
+        if label == self.left_label and self.curr_direction != 'left':
             self.move_left()
-        elif label == self.right_label:
+        elif label == self.right_label and self.curr_direction != 'right':
             self.move_right()
         else:
             print('Servo did not recognize label:', label)

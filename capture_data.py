@@ -83,7 +83,7 @@ def trigger_capture(label, color='', save_dir='porter_data'):
 
 
 if __name__ == '__main__':
-    label = 'blank'
-    color = 'ducttape'
+    label = '2x4'
+    color = 'yellow'
 
-    trigger_capture(label, color=color)
+    trigger_capture(label, color=color, save_dir='porter_data')
