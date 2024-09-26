@@ -1,8 +1,8 @@
-from sklearn.model_selection import train_test_split
-import torch
-from torchvision import transforms, datasets, models
-from torch.utils.data import Dataset
 import matplotlib.pyplot as plt
+import torch
+from sklearn.model_selection import train_test_split
+from torch.utils.data import Dataset
+from torchvision import datasets, models, transforms
 
 
 class TransposeToTensor(object):
@@ -14,13 +14,17 @@ class TransposeToTensor(object):
 
 class LegoDataset(Dataset):
 
-    def __init__(self, split, transform=None, root_dir='lego_data/base_images', seed=42):
+    def __init__(
+        self, split, transform=None, root_dir="lego_data/base_images", seed=42
+    ):
         """
         Args:
          - split (str): train, val, or test split
         """
         self.root_dir = root_dir
-        self.image_folder = datasets.ImageFolder(root=self.root_dir) # imgs is the attribute where everything lives
+        self.image_folder = datasets.ImageFolder(
+            root=self.root_dir
+        )  # imgs is the attribute where everything lives
         self.class_names = self.image_folder.classes
 
         # Train/Val/Test - 70/10/20
@@ -29,15 +33,21 @@ class LegoDataset(Dataset):
         if split is None:
             self.imgs, self.labels = (X, y)
         else:
-            _X, X_test, _y, y_test = train_test_split(X, y, test_size=.2, random_state=seed)
-            X_train, X_val, y_train, y_val = train_test_split(_X, _y, test_size=.125, random_state=seed)
+            _X, X_test, _y, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=seed
+            )
+            X_train, X_val, y_train, y_val = train_test_split(
+                _X, _y, test_size=0.125, random_state=seed
+            )
 
-            splits = {'train': (X_train, y_train),
-                        'val':(X_val, y_val),
-                        'test': (X_test, y_test)}
+            splits = {
+                "train": (X_train, y_train),
+                "val": (X_val, y_val),
+                "test": (X_test, y_test),
+            }
 
             if split not in splits:
-                raise ValueError('Invalid split name')
+                raise ValueError("Invalid split name")
             self.imgs, self.labels = splits[split]
 
         self.transform = transform
@@ -57,18 +67,22 @@ class LegoDataset(Dataset):
             image = self.transform(image)
 
         return image, label
-    
+
 
 def get_inference_transforms(model: str):
-    if model == 'resnet50':
+    if model == "resnet50":
         pretrained_transforms = models.ResNet50_Weights.IMAGENET1K_V2.transforms()
-    elif model == 'mobilenetv3large':
-        pretrained_transforms = models.MobileNet_V3_Large_Weights.IMAGENET1K_V2.transforms()
+    elif model == "mobilenetv3large":
+        pretrained_transforms = (
+            models.MobileNet_V3_Large_Weights.IMAGENET1K_V2.transforms()
+        )
     else:
         raise ValueError(f'Model name "{model}" not recognized')
 
-    inference_transforms = transforms.Compose([
-        TransposeToTensor(),
-        pretrained_transforms,
-    ])
+    inference_transforms = transforms.Compose(
+        [
+            TransposeToTensor(),
+            pretrained_transforms,
+        ]
+    )
     return inference_transforms

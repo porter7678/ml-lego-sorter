@@ -1,9 +1,10 @@
-from gpiozero import AngularServo
 import os
-import time
 import threading
+import time
 
+from gpiozero import AngularServo
 from gpiozero.pins.pigpio import PiGPIOFactory
+
 
 class MyServo:
 
@@ -14,17 +15,17 @@ class MyServo:
 
         # pin 12 == gpio 18
         gpio_num = 18
-        
+
         # Use environment variables for pigpio address and port
-        pigpio_host = os.getenv('PIGPIO_ADDR', 'localhost')
-        pigpio_port = int(os.getenv('PIGPIO_PORT', 8888))
+        pigpio_host = os.getenv("PIGPIO_ADDR", "localhost")
+        pigpio_port = int(os.getenv("PIGPIO_PORT", 8888))
         factory = PiGPIOFactory(host=pigpio_host, port=pigpio_port)
 
         self.servo = AngularServo(
             gpio_num,
             pin_factory=factory,
-            min_pulse_width=0.5/1000,
-            max_pulse_width=2.5/1000,
+            min_pulse_width=0.5 / 1000,
+            max_pulse_width=2.5 / 1000,
         )
         self.stop()
 
@@ -41,15 +42,16 @@ class MyServo:
         self.curr_direction = "right"
 
     def move_arm(self, label):
-        if label == self.left_label and self.curr_direction != 'left':
+        if label == self.left_label and self.curr_direction != "left":
             self.move_left()
-        elif label == self.right_label and self.curr_direction != 'right':
+        elif label == self.right_label and self.curr_direction != "right":
             self.move_right()
         else:
-            print('Servo did not recognize label:', label)
+            print("Servo did not recognize label:", label)
 
     def stop(self):
         self.servo.detach()
+
 
 class ServoThread(threading.Thread):
     def __init__(self, servo):
@@ -74,9 +76,9 @@ class ServoThread(threading.Thread):
         print("Successfully cleaned up servo thread")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     servo = MyServo(None, None)
-    
+
     servo.move_left()
     time.sleep(2)
     servo.move_right()

@@ -27,9 +27,9 @@ import os
 import time
 
 import cv2 as cv
-from PIL import Image
 import torch
-from torchvision import transforms, models, datasets
+from PIL import Image
+from torchvision import datasets, models, transforms
 
 os.environ["QT_QPA_PLATFORM"] = "xcb"
 
@@ -40,10 +40,12 @@ cap.set(cv.CAP_PROP_FRAME_WIDTH, 224)
 cap.set(cv.CAP_PROP_FRAME_HEIGHT, 224)
 cap.set(cv.CAP_PROP_FPS, 36)
 
-preprocess = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
+preprocess = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ]
+)
 
 # net = models.mobilenet_v3_large(weights="DEFAULT")
 # net = models.efficientnet_v2_s(weights="DEFAULT")

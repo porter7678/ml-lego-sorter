@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 import cv2 as cv
 from PIL import Image
 
-def auto_capture(label, color='', save_dir='porter_data'):
+
+def auto_capture(label, color="", save_dir="porter_data"):
     os.environ["QT_QPA_PLATFORM"] = "xcb"
 
     cap = cv.VideoCapture(0)
@@ -20,7 +21,6 @@ def auto_capture(label, color='', save_dir='porter_data'):
     next_save_time = datetime.now() + timedelta(seconds=5)
     save_path = os.path.join(save_dir, label)
     os.makedirs(save_path, exist_ok=True)
-
 
     while True:
         ret, image = cap.read()
@@ -37,14 +37,14 @@ def auto_capture(label, color='', save_dir='porter_data'):
             next_save_time = datetime.now() + timedelta(seconds=1)
 
         cv.imshow("frame", image)
-        if cv.waitKey(1) == ord('q'):
+        if cv.waitKey(1) == ord("q"):
             break
 
     cap.release()
     cv.destroyAllWindows()
 
 
-def trigger_capture(label, color='', save_dir='porter_data'):
+def trigger_capture(label, color="", save_dir="porter_data"):
     os.environ["QT_QPA_PLATFORM"] = "xcb"
 
     cap = cv.VideoCapture(0)
@@ -59,7 +59,6 @@ def trigger_capture(label, color='', save_dir='porter_data'):
     save_path = os.path.join(save_dir, label)
     os.makedirs(save_path, exist_ok=True)
 
-
     while True:
         ret, image = cap.read()
 
@@ -70,9 +69,9 @@ def trigger_capture(label, color='', save_dir='porter_data'):
         cv.imshow("frame", image)
 
         key = cv.waitKey(1)
-        if key == ord('q'):
+        if key == ord("q"):
             break
-        elif key == ord(' '):  # Spacebar pressed
+        elif key == ord(" "):  # Spacebar pressed
             timestamp = datetime.now().strftime("%H%M%S_%f")[:-3]
             image_filename = os.path.join(save_path, f"{color}_{timestamp}.jpg")
             cv.imwrite(image_filename, image)
@@ -82,8 +81,8 @@ def trigger_capture(label, color='', save_dir='porter_data'):
     cv.destroyAllWindows()
 
 
-if __name__ == '__main__':
-    label = '2x4'
-    color = 'yellow'
+if __name__ == "__main__":
+    label = "2x4"
+    color = "yellow"
 
-    trigger_capture(label, color=color, save_dir='porter_data')
+    trigger_capture(label, color=color, save_dir="porter_data")

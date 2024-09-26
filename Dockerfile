@@ -15,4 +15,4 @@ RUN pip3 install scikit-learn matplotlib opencv-python
 RUN pip3 install pigpio gpiozero
 
 # Indicate that the build process is complete
-RUN echo "porter complete."
+RUN echo "Complete."
