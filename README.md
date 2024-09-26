@@ -6,16 +6,16 @@
 This project is a computer vision-powered LEGO sorting machine. Using a Raspberry Pi and a fine-tuned MobileNet model, LEGOs are automatically sorted by shape as they move along a conveyor belt. The system runs model inference on the Raspberry Pi via Docker, overcoming real-time performance challenges.
 
 ## Contents
-- [🎯 Objective](#🎯-objective)
-- [🛠️ Implementation](#🛠️-implementation)
-  - [👷 Mechanical Construction](#👷-mechanical-construction)
-  - [📊 Data](#📊-data)
-  - [🧠 Model & Training](#🧠-model--training)
-  - [🚀 Deployment](#🚀-deployment)
-  - [🤖 Inference](#🤖-inference)
-  - [📈 Results](#📈-results)
-  - [🔮 Future Work](#🔮-future-work)
-- [💻 Setup Instructions](#💻-setup-instructions)
+- [🎯 Objective](#-objective)
+- [🛠️ Implementation](#-implementation)
+  - [👷 Mechanical Construction](#-mechanical-construction)
+  - [📊 Data](#-data)
+  - [🧠 Model & Training](#-model--training)
+  - [🚀 Deployment](#-deployment)
+  - [🤖 Inference](#-inference)
+  - [📈 Results](#-results)
+  - [🔮 Future Work](#-future-work)
+- [💻 Setup Instructions](#-setup-instructions)
  
 
 
