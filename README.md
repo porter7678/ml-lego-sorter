@@ -7,7 +7,7 @@ This project is a computer vision-powered LEGO sorting machine. Using a Raspberr
 
 ## Contents
 - [🎯 Objective](#-objective)
-- [🛠️ Implementation](#-implementation)
+- [🔨 Implementation](#-implementation)
   - [👷 Mechanical Construction](#-mechanical-construction)
   - [📊 Data](#-data)
   - [🧠 Model & Training](#-model--training)
@@ -22,7 +22,7 @@ This project is a computer vision-powered LEGO sorting machine. Using a Raspberr
 ## 🎯 Objective
 Too many ML models never make it out of a Jupyter notebook. I wanted to deploy an ML model into the real world using Docker for real-time inferencing. The focus of this project was to get something deployed that works, rather than on fancy models and perfect accuracy.
 
-# 🛠️ Implementation
+# 🔨 Implementation
 ## 👷 Mechanical Construction
 After spending more time, money, and duct tape than I care to admit trying to get the conveyor belt functioning and fussing around with gearbox ratios, I realized I probably should have just 3D printed most of the components. Regardless, the first step of the project was building the following mechanical components:
  - A conveyor belt made of PVC pipes, spare cloth, and duct tape
